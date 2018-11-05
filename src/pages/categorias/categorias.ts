@@ -22,8 +22,7 @@ export class CategoriasPage {
   ionViewDidLoad() {
     this.categoriaService.findAll().subscribe(res => {
       this.listCategoria = res;
-    }, err => {
-    });
+    }, err => {});
   }
 
 }
