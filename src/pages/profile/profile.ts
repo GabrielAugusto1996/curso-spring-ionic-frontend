@@ -14,27 +14,32 @@ export class ProfilePage {
 
   cliente: ClienteDTO;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, 
-              private storageService: StorageService, private clienteService: ClienteService) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+    private storageService: StorageService, private clienteService: ClienteService) {
   }
 
   ionViewDidLoad() {
     let localUser = this.storageService.getLocalUser();
-    
+
     if (localUser && localUser.email) {
       this.clienteService.findByEmail(localUser.email).subscribe(response => {
-
         this.cliente = response;
         this.getImageIfExists();
-      }, err => {});
+      }, err => {
+        if (err.status == 403) {
+          this.navCtrl.setRoot('HomePage');
+        }
+      });
+    } else {
+      this.navCtrl.setRoot('HomePage');
     }
   }
 
   getImageIfExists() {
     this.clienteService.getImageFromBucket(this.cliente.id)
-    .subscribe(response => {
-      this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
-    }, error => {});
+      .subscribe(response => {
+        this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
+      }, error => { });
   }
 
 }
