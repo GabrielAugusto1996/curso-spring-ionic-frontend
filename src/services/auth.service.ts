@@ -11,11 +11,21 @@ export class AuthService {
 
     jwtHelper: JwtHelper = new JwtHelper();
 
-    constructor(private http: HttpClient, private storageService: StorageService) {}
+    constructor(private http: HttpClient, private storageService: StorageService) { }
+
+    refreshToken() {
+        return this.http.post(
+            `${API_CONFIG.baseUrl}/auth/refresh_token`,
+            {},
+            {
+                observe: 'response',
+                responseType: 'text'
+            })
+    }
 
     authenticate(creds: CredenciaisDTO) {
         return this.http.post(
-            `${API_CONFIG.baseUrl}/login`, 
+            `${API_CONFIG.baseUrl}/login`,
             creds,
             {
                 observe: 'response',
@@ -23,7 +33,7 @@ export class AuthService {
             })
     }
 
-    loginSucess(authorizationValue : string) {
+    loginSucess(authorizationValue: string) {
         let token = authorizationValue.substring(7);
         let user: LocalUser = {
             token: token,
