@@ -41,4 +41,8 @@ export class HomePage {
     }, err => {});
   }
 
+  cadastrar() {
+    this.navCtrl.push('SignupPage');
+  }
+
 }
