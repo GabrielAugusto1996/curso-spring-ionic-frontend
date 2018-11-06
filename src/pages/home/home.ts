@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth.service';
 import { CredenciaisDTO } from './../../models/credenciais.model';
 import { Component } from '@angular/core';
 import { NavController, IonicPage, MenuController } from 'ionic-angular';
@@ -14,12 +15,15 @@ export class HomePage {
     senha: ""
   };
 
-  constructor(public navCtrl: NavController, private menu: MenuController) {
+  constructor(public navCtrl: NavController, private menu: MenuController, private authService: AuthService) {
 
   }
 
   login() {
-    this.navCtrl.setRoot('CategoriasPage');
+    this.authService.authenticate(this.creds).subscribe(response => {
+      console.log(response.headers.get('Authorization'));
+      this.navCtrl.setRoot('CategoriasPage');
+    }, err => {});
   }
 
   ionViewWillEnter() {
@@ -27,7 +31,6 @@ export class HomePage {
   }
 
   ionViewDidLeave() {
-      console.log(this.creds);
       this.menu.swipeEnable(true);
   }
 
