@@ -1,9 +1,10 @@
+import { ClienteService } from './../../services/domain/cliente.service';
 import { CidadeDTO } from './../../models/cidade.model';
 import { EstadoDTO } from './../../models/estado.model';
 import { EstadoService } from './../../services/domain/estado.service';
 import { CidadeService } from './../../services/domain/cidade.service';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @IonicPage()
@@ -19,7 +20,9 @@ export class SignupPage {
   cidades: CidadeDTO[];
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public formBuilder: FormBuilder, public cidadeService: CidadeService, public estadoService: EstadoService) {
+    public formBuilder: FormBuilder, public cidadeService: CidadeService,
+    public estadoService: EstadoService, public clienteService: ClienteService,
+    public alertController: AlertController) {
 
     this.formGroup = this.formBuilder.group({
       nome: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
@@ -40,8 +43,6 @@ export class SignupPage {
     });
 
   }
-
-  cadastrarUsuario() { }
 
   ionViewDidLoad() {
 
@@ -65,6 +66,33 @@ export class SignupPage {
       this.formGroup.controls.cidadeId.setValue(null);
 
     }, err => { });
+  }
+
+  cadastrarUsuario() {
+
+    this.clienteService.inserirUsuario(this.formGroup.value)
+      .subscribe(response => {
+        this.mostrarCadastroUsuarioSucesso();
+      }, err => { });
+  }
+
+  mostrarCadastroUsuarioSucesso() {
+
+    let alert = this.alertController.create({
+      title: 'Sucesso!',
+      message: 'Cadastro efetuado com sucesso!',
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+
+    alert.present();
   }
 
 }
