@@ -25,4 +25,8 @@ export class CategoriasPage {
     }, err => {});
   }
 
+  showProdutos() {
+    this.navCtrl.push('ProdutosPage');
+  }
+
 }
