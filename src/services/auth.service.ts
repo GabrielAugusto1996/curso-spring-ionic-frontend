@@ -1,3 +1,4 @@
+import { CartService } from './domain/cart.service';
 import { LocalUser } from './../models/local_user';
 import { API_CONFIG } from './../config/api.config';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +12,7 @@ export class AuthService {
 
     jwtHelper: JwtHelper = new JwtHelper();
 
-    constructor(private http: HttpClient, private storageService: StorageService) { }
+    constructor(private http: HttpClient, private storageService: StorageService, private cartService: CartService) { }
 
     refreshToken() {
         return this.http.post(
@@ -40,6 +41,7 @@ export class AuthService {
             email: this.jwtHelper.decodeToken(token).sub
         };
         this.storageService.setLocalUser(user);
+        this.cartService.createOrClearCart();
     }
 
     logout() {
