@@ -1,3 +1,5 @@
+import { CartService } from './../../services/domain/cart.service';
+import { PedidoDTO } from './../../models/pedido.model';
 import { ClienteService } from './../../services/domain/cliente.service';
 import { StorageService } from './../../services/storage.service';
 import { EnderecoDTO } from './../../models/endereco.model';
@@ -13,10 +15,13 @@ export class PickAddressPage {
 
   listEndereco: EnderecoDTO[];
 
+  pedido: PedidoDTO;
+
   constructor(public navCtrl: NavController, 
               public navParams: NavParams, 
               public storageService: StorageService, 
-              public clienteService: ClienteService) {
+              public clienteService: ClienteService,
+              public cartService: CartService) {
   }
 
   ionViewDidLoad() {
@@ -25,6 +30,17 @@ export class PickAddressPage {
     if (localUser && localUser.email) {
       this.clienteService.findByEmail(localUser.email).subscribe(response => {
         this.listEndereco = response['enderecos'];
+        
+        const cart = this.cartService.getCart();
+
+        this.pedido = {
+          cliente: { id: response['id']},
+          enderecoDeEntrega: null,
+          pagamento: null,
+          itens: cart.items.map(x => {
+            return { quantidade: x.quantidade , produto: { id: x.produto.id }}
+          })
+        }
       }, err => {
         if (err.status == 403) {
           this.navCtrl.setRoot('HomePage');
@@ -33,6 +49,12 @@ export class PickAddressPage {
     } else {
       this.navCtrl.setRoot('HomePage');
     }
+  }
+
+  proximaPagina(endereco: EnderecoDTO) {
+
+    this.pedido.enderecoDeEntrega = {id: endereco.id};
+
   }
 
 }
