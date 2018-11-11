@@ -13,10 +13,10 @@ export class ProdutoService {
         return this.http.get<ProdutoDTO>(`${API_CONFIG.baseUrl}/produtos/${produto_id}`);
     }
 
-    findByCategoria(categoriaId: string) {
+    findByCategoria(categoriaId: string, page: number = 0, linesPerPage: number = 24) {
 
         return this.http.get<ProdutoDTO>(
-            `${API_CONFIG.baseUrl}/produtos/?categorias=${categoriaId}`)
+            `${API_CONFIG.baseUrl}/produtos/?categorias=${categoriaId}&page=${page}&linesPerPage=${linesPerPage}`);
     }
 
     getSmallImageFromBucket(id: string): Observable<any> {
