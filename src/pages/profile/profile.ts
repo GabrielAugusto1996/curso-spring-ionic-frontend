@@ -23,6 +23,10 @@ export class ProfilePage {
   }
 
   ionViewDidLoad() {
+    this.loadData();
+  }
+
+  loadData() {
     let localUser = this.storageService.getLocalUser();
 
     if (localUser && localUser.email) {
@@ -56,13 +60,26 @@ export class ProfilePage {
       encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE
     }
-    
+
     this.camera.getPicture(options).then((imageData) => {
       this.picture = 'data:image/png;base64,' + imageData;
       this.cameraOn = false;
-    }, (err) => {});
+    }, (err) => { });
+  }
 
+  sendPicture() {
+    
+    this.clienteService.uploadPicture(this.picture).subscribe(response => {
 
+      this.picture = null;
+      this.loadData();
+
+    }, err => {});
+    
+  }
+
+  cancel() {
+    this.picture = null;
   }
 
 }
